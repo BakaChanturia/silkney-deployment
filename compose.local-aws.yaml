@@ -1,0 +1,11 @@
+# Optional local credentials only. Never copy ~/.aws into an image.
+# The non-root app user must be able to read these mounted files.
+services:
+  chatbot:
+    environment:
+      AWS_PROFILE: ${AWS_PROFILE:-default}
+      AWS_SHARED_CREDENTIALS_FILE: /run/aws/credentials
+      AWS_CONFIG_FILE: /run/aws/config
+      AWS_EC2_METADATA_DISABLED: "true"
+    volumes:
+      - ${AWS_CONFIG_DIR:-~/.aws}:/run/aws:ro

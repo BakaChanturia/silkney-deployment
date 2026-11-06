@@ -1,0 +1,24 @@
+services:
+  chatbot:
+    image: chatbot-baka:local
+    build: .
+    ports:
+      - "127.0.0.1:8000:8000"
+    environment:
+      AWS_REGION: ${AWS_REGION:-us-east-1}
+      BEDROCK_MODEL_ID: ${BEDROCK_MODEL_ID:-us.anthropic.claude-opus-4-8}
+      BEDROCK_MAX_TOKENS: ${BEDROCK_MAX_TOKENS:-2048}
+    restart: unless-stopped
+    init: true
+    read_only: true
+    tmpfs:
+      - /tmp:size=32m,mode=1777
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"

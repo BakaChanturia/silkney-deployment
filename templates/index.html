@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="A simple, thoughtful chat with Claude on Amazon Bedrock.">
+  <title>Common — a little space to think</title>
+  <link rel="icon" href="{{ url_for('static', filename='favicon.svg') }}" type="image/svg+xml">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <script src="{{ url_for('static', filename='app.js') }}" defer></script>
+</head>
+<body>
+  <svg class="icon-library" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M12 19V5m-6 6 6-6 6 6"/></symbol>
+    <symbol id="i-chat" viewBox="0 0 24 24"><path d="M20 11.5a8 8 0 0 1-8 8H5l-3 3v-11a9 9 0 1 1 18 0Z"/></symbol>
+    <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V4a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v11a1 1 0 0 0 1 1h4"/></symbol>
+    <symbol id="i-spark" viewBox="0 0 24 24"><path d="m12 3 2.8 6.2L21 12l-6.2 2.8L12 21l-2.8-6.2L3 12l6.2-2.8Z"/></symbol>
+    <symbol id="i-code" viewBox="0 0 24 24"><path d="m8 6-6 6 6 6m8-12 6 6-6 6M14 4l-4 16"/></symbol>
+    <symbol id="i-write" viewBox="0 0 24 24"><path d="m15 4 5 5M4 20l5-1L21 7l-5-5L4 14Z"/></symbol>
+    <symbol id="i-light" viewBox="0 0 24 24"><path d="M9 18h6m-6 3h6M8 14a7 7 0 1 1 8 0l-1 1v3H9v-3Z"/></symbol>
+    <symbol id="i-trash" viewBox="0 0 24 24"><path d="M3 6h18M9 6V3h6v3M5 6l1 15h12l1-15M10 10v7m4-7v7"/></symbol>
+    <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></symbol>
+  </svg>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar" aria-label="Conversations">
+      <a class="brand" href="/" aria-label="Common home"><span class="brand-mark">✳</span> common<span class="brand-period">.</span></a>
+      <button id="new-chat" class="new-chat"><svg class="icon"><use href="#i-plus"/></svg> New conversation <span class="shortcut" aria-hidden="true">↵</span></button>
+      <div class="sidebar-label">YOUR SPACE</div>
+      <nav id="conversation-list" class="conversation-list" aria-label="Chat history"></nav>
+      <div class="sidebar-bottom">
+        <div class="private-note"><span class="small-dot"></span> History stays in this browser</div>
+        <button id="clear-history" class="clear-history"><svg class="icon"><use href="#i-trash"/></svg> Clear history</button>
+        <div class="profile"><div class="profile-avatar">B</div><div><strong>Your workspace</strong><span>A little room for good ideas</span></div></div>
+      </div>
+    </aside>
+    <main class="main-panel">
+      <header class="topbar">
+        <div class="topbar-left"><button id="menu-toggle" class="icon-button menu-toggle" aria-label="Toggle conversation list" aria-expanded="false"><svg class="icon"><use href="#i-menu"/></svg></button><span class="model-name">Claude Opus 4.8</span><span class="model-tag">via Bedrock</span></div>
+        <div class="connection"><span id="connection-dot" class="small-dot"></span><span id="connection-label">Connecting</span></div>
+      </header>
+      <div id="scroll-area" class="scroll-area">
+        <section id="welcome" class="welcome">
+          <div class="welcome-eyebrow"><span class="small-dot"></span> A LITTLE SPACE TO THINK</div>
+          <div class="welcome-mark" aria-hidden="true">✳</div>
+          <h1>Good ideas start<br>with a conversation<span>.</span></h1>
+          <p>A question, a first draft, a curious thought.<br>Whatever’s on your mind, let’s work through it.</p>
+          <div class="suggestions">
+            <button class="suggestion" data-prompt="Explain a complex idea in a simple way. Let's start with how cloud computing works."><span class="suggestion-icon sage"><svg class="icon"><use href="#i-light"/></svg></span><strong>Make sense of something</strong><span>Turn a big idea into a simple one</span><span class="card-arrow">↗</span></button>
+            <button class="suggestion" data-prompt="Help me write a friendly, professional email to introduce myself to a new team. Ask me what you need to know."><span class="suggestion-icon peach"><svg class="icon"><use href="#i-write"/></svg></span><strong>Find the right words</strong><span>A fresh start for your next draft</span><span class="card-arrow">↗</span></button>
+            <button class="suggestion" data-prompt="Help me brainstorm a small, useful weekend coding project. Ask me about my interests first."><span class="suggestion-icon lavender"><svg class="icon"><use href="#i-code"/></svg></span><strong>Build a little something</strong><span>Go from a thought to a first step</span><span class="card-arrow">↗</span></button>
+          </div>
+        </section>
+        <section id="messages" class="messages" aria-label="Conversation" aria-live="polite" aria-relevant="additions" hidden></section>
+      </div>
+      <div class="composer-area">
+        <div id="error-message" class="error-message" role="alert" hidden></div>
+        <form id="chat-form" class="composer">
+          <label class="sr-only" for="message-input">Your message</label>
+          <textarea id="message-input" name="message" rows="2" maxlength="8000" placeholder="What’s on your mind?" required></textarea>
+          <div class="composer-bottom"><span><svg class="icon"><use href="#i-spark"/></svg> A little curiosity goes a long way</span><button id="send-button" class="send-button" type="submit" aria-label="Send message" disabled><svg class="icon"><use href="#i-arrow"/></svg></button></div>
+        </form>
+        <p class="composer-note">AI can make mistakes. Give important details a second look. <span>Enter to send · Shift + Enter for a new line</span></p>
+      </div>
+    </main>
+  </div>
+</body>
+</html>
